@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="znMmfU" name="SimplePluginHost" projectType="consoleapp"
-              jucerVersion="5.4.3">
+              jucerVersion="5.4.3" cppLanguageStandard="17">
   <MAINGROUP id="RLn8oU" name="SimplePluginHost">
     <GROUP id="{28C93DFA-A4D4-4963-F914-11BC2D578556}" name="Source">
       <FILE id="AS0j37" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

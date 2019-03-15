@@ -7,37 +7,36 @@
 
   ==============================================================================
 */
+#include <string>
 #include <iostream>
+#include <filesystem>
 #include "../JuceLibraryCode/JuceHeader.h"
 
+
+namespace fs = std::experimental::filesystem;
+
+
+
 //==============================================================================
-int main (int argc, char* argv[])
-{
+void displayPlugin(AudioPluginFormatManager& pluginFormatManager, std::string path) {
 
 	KnownPluginList plugList;
 	OwnedArray<juce::PluginDescription> pluginDescriptions;
-	juce::VSTPluginFormat format;
 
-
-	String path("C:/VST/store/Tunefish4/Tunefish4.vst3");
-
-
-	AudioPluginFormatManager pluginFormatManager;
-	pluginFormatManager.addDefaultFormats();
 	for (int i = 0; i < pluginFormatManager.getNumFormats(); ++i)
 	{
-		bool added = plugList.scanAndAddFile(path, true, pluginDescriptions,
+		plugList.scanAndAddFile(path, true, pluginDescriptions,
 			*pluginFormatManager.getFormat(i));
-
 	}
-	jassert(pluginDescriptions.size() > 0);
 
 	if (pluginDescriptions.size() > 0) {
 
 		std::cout << "Creating plugin...";
-		String pluginLoadError ("An error occured loading plugin");
+		String pluginLoadError("An error occured loading plugin");
 		AudioPluginInstance* pluginInstance = pluginFormatManager.createPluginInstance(*pluginDescriptions[0], 44100, 512, pluginLoadError);
 
+		std::cout << "\n====> File: ";
+		std::cout << path;
 		std::cout << "\nPlugin Identifier: ";
 		std::cout << pluginInstance->getPluginDescription().fileOrIdentifier;
 		std::cout << "\nPlugin Name: ";
@@ -49,7 +48,30 @@ int main (int argc, char* argv[])
 		std::cout << "\nPlugin Manufacturer Name: ";
 		std::cout << pluginInstance->getPluginDescription().manufacturerName;
 
+	}
+}
 
+
+int main (int argc, char* argv[])
+{
+
+	if (argc != 2) {
+		std::cout << "\nError: Wrong program argument number";
+		std::cout << "\nYou must add VST directory path: ./explore /path/to/directory";
+		std::cin.ignore();
+		return 0;
+	}
+
+	AudioPluginFormatManager pluginFormatManager;
+	pluginFormatManager.addDefaultFormats();
+
+	std::string path = argv[1];
+	std::cout << "\nExploring: ";
+	std::cout << path;
+
+	//TODO: Recursive directory scanning
+	for (const auto & entry : fs::directory_iterator(path)) {
+		displayPlugin(pluginFormatManager, entry.path().string());
 	}
 
 	std::cout << "\nProgram execution complete.";
@@ -57,3 +79,5 @@ int main (int argc, char* argv[])
 
     return 0;
 }
+
+
